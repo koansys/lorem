@@ -1,7 +1,6 @@
 # -*- encoding: utf-8 -*-
 # TODO:
-# - ssn
-# - phone (random formats, just subst digits?)
+# - Do we need to use a '555' exchange for phone numbers?
 # - test for text, ssn, phone
 
 import md5
@@ -98,6 +97,25 @@ def email(address):
     (u, h) = address.split('@')
     return "@".join((username(u), host_name(h)))
 
+def number(text):
+    """Transform numeric string which may have embedded punctuation.
+    Punctuation is preserved, e.g., 202-555-1212 -> 104-602-3763
+    This can be used for phone and social security numbers.
+    """
+    if text.strip() == "":
+        return text
+    m = md5.new()
+    m.update(text)
+    digits = "%s" % int(m.hexdigest(), 16)
+    d = ""
+    out = ""
+    for n, c in enumerate(text):
+        if c.isdigit():
+            out += digits[n % len(digits)]
+        else:
+            out += c
+    return out
+
 def text(text):
     """
     TODO:
@@ -120,10 +138,13 @@ transforms = {
     'ip'                : ip,
     'last'              : last_name,
     'last_name'         : last_name,
+    'number'            : number,
+    'numeric'           : number,
     'person'            : person_name,
     'person_name'       : person_name,
+    'phone'             : number,
+    'ssn'               : number,
     'text'              : text,
-    'url'               : url,
     'url'               : url,
     'user'              : username,
     'username'          : username,

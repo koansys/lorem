@@ -139,8 +139,40 @@ class TestEmail(unittest.TestCase):
     def test_email_fqdn(self):
         self.assertEqual(t.email("jsmith1@foo.example.gov"), 'TPitts@royce.example.gov')
 
+class TestNumber(unittest.TestCase):
+
+    def test_empty(self):
+        self.assertEqual(t.number(""), '')
+
+    def test_no_punc(self):
+        self.assertEqual(t.number("42"), '21')
+
+    def test_ssn(self):
+        self.assertEqual(t.number("123-45-6789"), '405-92-2523')
+
+    def test_phone_dash(self):
+        self.assertEqual(t.number("202-555-1212"), '104-602-3763')
+
+    def test_long(self):
+        self.assertEqual(t.number("202-555-1212_202-555-1212_202-555"),
+                         '284-902-3455_113-703-3306_045-647')
+
+    def test_phone_paren(self):
+        self.assertEqual(t.number("(202) 555-1212"), '(242) 285-1414')
+
 class TestText(unittest.TestCase):
-    pass
+
+    def test_empty(self):
+        self.assertEqual(t.text(""), '')
+
+    def test_one_word(self):
+        self.assertEqual(t.text("foo"), 'Lor')
+
+    def test_two_words(self):
+        self.assertEqual(t.text("foo bar"), 'Lorem i')
+
+    def test_three_words(self):
+        self.assertEqual(t.text("foo bar stuff"), 'Lorem ipsum d')
 
 if __name__ == "__main__":
     unittest.main()
