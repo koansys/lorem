@@ -1,4 +1,9 @@
 # -*- encoding: utf-8 -*-
+# TODO:
+# - ssn
+# - phone (random formats, just subst digits?)
+# - test for text, ssn, phone
+
 import md5
 from urlparse import urlsplit, urlunsplit
 
@@ -103,7 +108,23 @@ def text(text):
         return text
     return replacement_text[:len(text)]
 
-
-
-
-
+# Map of easy-to-remember transform names to function handles
+transforms = {
+    'email'             : email,
+    'first'             : first_name,
+    'first_last_name'   : first_last_name,
+    'first_name'        : first_name,
+    'firstlast'         : first_last_name,
+    'host'              : host_name,
+    'host_name'         : host_name,
+    'ip'                : ip,
+    'last'              : last_name,
+    'last_name'         : last_name,
+    'person'            : person_name,
+    'person_name'       : person_name,
+    'text'              : text,
+    'url'               : url,
+    'url'               : url,
+    'user'              : username,
+    'username'          : username,
+    }
