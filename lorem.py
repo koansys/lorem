@@ -47,7 +47,7 @@ for transform in fields.values():
 
 source = sys.argv[1]
 url = urlsplit(source)
-if not url.scheme:
+if not url.scheme:              # do a CSV file
     if source == "-":
         csv_in = DictReader(sys.stdin)
         outf = sys.stdout
@@ -68,8 +68,25 @@ if not url.scheme:
         logging.info(u"row  after: %s" % row)
         csv_out.writerow(row)
 
-
-
-
-
-
+else:                           # do a database
+    if not url.scheme.startswith('sqlite'):
+        raise RuntimeError(u"We only support sqlite now")
+    conn = sqlite3.connect(url.path[1:]) # abs: sqlite3:////path/f.db, rel: sqlite3:///path/f.db
+    cursor = conn.cursor()
+    # TODO use sqlite3.PARSE_COLNAMES to ensure our field specs are ok
+    for field, transform  in fields.items():
+        logging.info(u"db field=%s transform=%s" % (field, transform))
+        try:
+            table, attr = field.split('.')
+        except ValueError, e:
+            raise RuntimeError(u"Need to specify tablename.attribute separated by a dot in field='%s'" % field)
+        # DBAPI doesn't let us do param :name style binding for Table or Column names.
+        query = u"SELECT DISTINCT %(attr)s FROM %(table)s" % {'table': table, 'attr': attr}
+        cursor.execute(query)
+        update = u"UPDATE %(table)s SET %(attr)s = :newvalue WHERE %(attr)s = :value" % {'table': table, 'attr': attr}
+        logging.info(u"update: %s" % update)
+        for (value,) in cursor.fetchall():
+            newvalue = transforms[transform](value)
+            #logging.info(u"table=%s attr=%s value=%s newvalue=%s" % (table, attr, value, newvalue))
+            cursor.execute(update, {'newvalue': newvalue, 'value': value})
+        conn.commit()
