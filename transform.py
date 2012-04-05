@@ -99,8 +99,8 @@ def text(text):
     - text longer than sample
     - pseudo random repeatable
     """
-    if name.strip() == "":
-        return name
+    if text.strip() == "":
+        return text
     return replacement_text[:len(text)]
 
 
