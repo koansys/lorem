@@ -16,6 +16,9 @@ class TestSelect(unittest.TestCase):
     def test_e(self):
         self.assertEqual(t.select('e', [1,2]), 1)
 
+    def test_unicode(self):
+        self.assertEqual(t.select(u'\u0161', [1,2]), 1)
+
 class TestHostName(unittest.TestCase):
     def test_empty(self):
         self.assertEqual(t.host_name(''), '')
