@@ -31,6 +31,8 @@ of Lorem Ipsum text.
 Types of Transforms
 ===================
 
+There are a number of different transforms and to make them easy to
+use, they have aliases that should be obvious.
 
 First Name, Last Name, First Last Name, Person Name
 ---------------------------------------------------
@@ -75,4 +77,19 @@ Text
 
 Lorem Ipsum.
 
+Usage Examples
+==============
 
+CSV
+---
+
+From named csv, outputs to default out-$SAMENAME::
+
+  ./lorem.py people.csv cn=name sn=name mail=email givenname=name employeenumber=number
+
+SQLite
+------
+
+Modifies data in place::
+
+  ./lorem.py sqlite:///people.sqlite people.cn=name people.sn=name people.mail=email people.givenname=name people.employeenumber=number

@@ -36,14 +36,14 @@ from transform import transforms
 
 logging.basicConfig(level=logging.INFO)
 
-# Do CSV first, read from stdin before we worry about arg parsing
-# use csv.Sniffer has_header
-
 fields = dict([arg.split(u'=') for arg in sys.argv[2:]])
 logging.info(u'fields=%s' % fields)
 for transform in fields.values():
     if transform not in transforms:
-        raise RuntimeError(u"Requested field name '%s' not in transform names: %s" % (field, transforms.keys()))
+        raise RuntimeError(u"Requested transform name '%s' not in transform names: %s" % (transform, ', '.join(sorted(transforms.keys()))))
+
+# Do CSV first, read from stdin before we worry about arg parsing
+# use csv.Sniffer has_header
 
 source = sys.argv[1]
 url = urlsplit(source)
@@ -62,9 +62,9 @@ if not url.scheme:              # do a CSV file
             raise RuntimeError(u"Requested field name '%s' not in CSV fields: %s" % (field, fieldnames))
     csv_out.writeheader()       # not if numeric
     for row in csv_in:
-        logging.info(u"row before: %s" % row)
+        #logging.info(u"row before: %s" % row)
         for field, transform in fields.items():
-            row[field] = transforms[transform](row[field])
+            row[field] = transforms[transform](row[field]).encode('utf-8')
         logging.info(u"row  after: %s" % row)
         csv_out.writerow(row)
 

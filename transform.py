@@ -72,8 +72,7 @@ def ip(name):
     """
     if name == None or name.strip() == u'':
         return name
-    m = md5.new()
-    m.update(name)
+    m = md5.new(name)
     h = m.hexdigest()
     return u'10.' + '.'.join([u'%d' % int(h[i:i+2], 16) for i in [2, 4, 6]])
 
@@ -98,8 +97,7 @@ def number(text):
     """
     if text == None or text.strip() == u'':
         return text
-    m = md5.new()
-    m.update(text)
+    m = md5.new(text)
     digits = u'%s' % int(m.hexdigest(), 16)
     d = u''
     out = u''
@@ -128,6 +126,7 @@ transforms = {
     u'first_name'        : first_name,
     u'firstlast'         : first_last_name,
     u'host'              : host_name,
+    u'hostname'          : host_name,
     u'host_name'         : host_name,
     u'ip'                : ip,
     u'last'              : last_name,
